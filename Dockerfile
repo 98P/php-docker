@@ -52,6 +52,7 @@ RUN set -ex \
     php7-xml \
     php7-xmlreader \
     php7-pcntl \
+    php7-tokenizer \
     # install dev packages
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libaio-dev openssl-dev libxml2-dev curl-dev \
     # install swoole
