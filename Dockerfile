@@ -2,6 +2,7 @@ FROM alpine:3.10
 
 COPY swoole-4.4.12.tgz /tmp/swoole.tgz
 COPY solr-2.5.0.tgz /tmp/solr.tgz
+COPY mongodb-1.6.0.tgz /tmp/mongodb.tgz
 COPY composer /usr/bin/composer
 
 LABEL maintainer="iFree <weizhuang_l@163.com>" version="1.0" license="MIT"
@@ -47,12 +48,16 @@ RUN set -ex \
     php7-sysvshm \
     php7-sysvmsg \
     php7-sysvsem \
+    php7-soap \
     php7-zip \
     php7-zlib \
     php7-xml \
     php7-xmlreader \
+    php7-xmlwriter \
     php7-pcntl \
     php7-tokenizer \
+    php7-fileinfo \
+    php7-simplexml \
     # install dev packages
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libaio-dev openssl-dev libxml2-dev curl-dev \
     # install swoole
@@ -78,6 +83,17 @@ RUN set -ex \
     && make && make install \
     ) \
     && echo "extension=solr.so" > /etc/php7/conf.d/solr.ini \
+    # install mongodb
+    && cd /tmp \
+    && mkdir -p mongodb \
+    && tar -xf mongodb.tgz -C mongodb --strip-components=1 \
+    && ( \
+    cd mongodb \
+    && phpize \
+    && ./configure \
+    && make && make install \
+    ) \
+    && echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini \
     # add config
     && { \
     echo "upload_max_filesize=100M"; \
@@ -97,4 +113,5 @@ RUN set -ex \
     && php -m \
     && php --ri swoole \
     && php --ri solr \
+    && php --ri mongodb \
     && echo -e "\033[42;37m Build Completed :).\033[0m\n"
