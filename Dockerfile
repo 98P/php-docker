@@ -3,6 +3,7 @@ FROM alpine:3.10
 COPY swoole-4.4.12.tgz /tmp/swoole.tgz
 COPY solr-2.5.0.tgz /tmp/solr.tgz
 COPY mongodb-1.6.0.tgz /tmp/mongodb.tgz
+COPY xlswriter-1.3.2.tgz /tmp/xlswriter.tgz
 COPY composer /usr/bin/composer
 
 LABEL maintainer="iFree <weizhuang_l@163.com>" version="1.0" license="MIT"
@@ -67,7 +68,7 @@ RUN set -ex \
     && ( \
     cd swoole \
     && phpize \
-    && ./configure --enable-mysqlnd --enable-openssl \
+    && ./configure --enable-mysqlnd --enable-openssl --enable-http2 \
     && make -s -j$(nproc) && make install \
     ) \
     && echo "extension=swoole.so" > /etc/php7/conf.d/swoole.ini \
@@ -94,6 +95,17 @@ RUN set -ex \
     && make && make install \
     ) \
     && echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini \
+    # install xlswriter
+    && cd /tmp \
+    && mkdir -p xlswriter \
+    && tar -xf xlswriter.tgz -C xlswriter --strip-components=1 \
+    && ( \
+    cd xlswriter \
+    && phpize \
+    && ./configure --enable-reader=yes \
+    && make -s -j$(nproc) && make install \
+    ) \
+    && echo "extension=xlswriter.so" > /etc/php7/conf.d/xlswriter.ini \
     # add config
     && { \
     echo "upload_max_filesize=100M"; \
@@ -114,4 +126,5 @@ RUN set -ex \
     && php --ri swoole \
     && php --ri solr \
     && php --ri mongodb \
+    && php --ri xlswriter \
     && echo -e "\033[42;37m Build Completed :).\033[0m\n"
