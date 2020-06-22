@@ -1,12 +1,10 @@
-FROM alpine:3.10
+FROM alpine:3.12
 
-COPY swoole-4.4.16.tgz /tmp/swoole.tgz
-COPY solr-2.5.0.tgz /tmp/solr.tgz
-COPY mongodb-1.6.0.tgz /tmp/mongodb.tgz
+COPY swoole-4.5.2.tgz /tmp/swoole.tgz
 COPY xlswriter-1.3.4.tgz /tmp/xlswriter.tgz
 COPY composer /usr/bin/composer
 
-LABEL maintainer="iFree <weizhuang_l@163.com>" version="1.0" license="MIT"
+LABEL maintainer="iFree <weizhuang_l@163.com>" version="1.1" license="MIT"
 
 ENV PHPIZE_DEPS="autoconf dpkg-dev dpkg file g++ gcc libc-dev make php7-dev php7-pear pkgconf re2c pcre-dev pcre2-dev zlib-dev libtool automake" \
     TIMEZONE=${timezone:-"Asia/Shanghai"}
@@ -73,28 +71,6 @@ RUN set -ex \
     ) \
     && echo "extension=swoole.so" > /etc/php7/conf.d/swoole.ini \
     && echo "swoole.use_shortname = 'Off'" >> /etc/php7/conf.d/swoole.ini \
-    # install solr
-    && cd /tmp \
-    && mkdir -p solr \
-    && tar -xf solr.tgz -C solr --strip-components=1 \
-    && ( \
-    cd solr \
-    && phpize \
-    && ./configure \
-    && make && make install \
-    ) \
-    && echo "extension=solr.so" > /etc/php7/conf.d/solr.ini \
-    # install mongodb
-    && cd /tmp \
-    && mkdir -p mongodb \
-    && tar -xf mongodb.tgz -C mongodb --strip-components=1 \
-    && ( \
-    cd mongodb \
-    && phpize \
-    && ./configure \
-    && make && make install \
-    ) \
-    && echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini \
     # install xlswriter
     && cd /tmp \
     && mkdir -p xlswriter \
@@ -124,7 +100,5 @@ RUN set -ex \
     && php -v \
     && php -m \
     && php --ri swoole \
-    && php --ri solr \
-    && php --ri mongodb \
     && php --ri xlswriter \
     && echo -e "\033[42;37m Build Completed :).\033[0m\n"
