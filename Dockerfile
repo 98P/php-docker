@@ -1,10 +1,10 @@
 FROM alpine:3.12
 
-COPY swoole-4.5.2.tgz /tmp/swoole.tgz
-COPY xlswriter-1.3.4.tgz /tmp/xlswriter.tgz
+COPY swoole-4.5.6.tgz /tmp/swoole.tgz
+COPY xlswriter-1.3.6.tgz /tmp/xlswriter.tgz
 COPY composer /usr/bin/composer
 
-LABEL maintainer="iFree <weizhuang_l@163.com>" version="1.1" license="MIT"
+LABEL maintainer="iFree <weizhuang_l@163.com>" version="1.2" license="MIT"
 
 ENV PHPIZE_DEPS="autoconf dpkg-dev dpkg file g++ gcc libc-dev make php7-dev php7-pear pkgconf re2c pcre-dev pcre2-dev zlib-dev libtool automake" \
     TIMEZONE=${timezone:-"Asia/Shanghai"}
