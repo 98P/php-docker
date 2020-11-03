@@ -57,6 +57,7 @@ RUN set -ex \
     php7-tokenizer \
     php7-fileinfo \
     php7-simplexml \
+    php7-opcache \
     # install dev packages
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libaio-dev openssl-dev libxml2-dev curl-dev \
     # install swoole
